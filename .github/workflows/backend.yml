@@ -4,12 +4,12 @@ on:
   push:
     branches: [ main, develop ]
     paths:
-      - 'herodotus-backend/**'
+      - 'krakens-backend/**'
       - '.github/workflows/backend.yml'
   pull_request:
     branches: [ main ]
     paths:
-      - 'herodotus-backend/**'
+      - 'krakens-backend/**'
 
 env:
   REGISTRY: ghcr.io
@@ -40,15 +40,15 @@ jobs:
             ${{ runner.os }}-go-
 
       - name: Download dependencies
-        working-directory: ./herodotus-backend
+        working-directory: ./krakens-backend
         run: go mod download
 
       - name: Run tests
-        working-directory: ./herodotus-backend
+        working-directory: ./krakens-backend
         run: go test -v ./...
 
       - name: Run linter
-        working-directory: ./herodotus-backend
+        working-directory: ./krakens-backend
         run: |
           go install golang.org/x/lint/golint@latest
           golint ./...
@@ -92,7 +92,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./herodotus-backend
+          context: ./krakens-backend
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

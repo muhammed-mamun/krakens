@@ -19,7 +19,7 @@ jobs:
           go-version: '1.22'
       
       - name: Test Backend
-        working-directory: ./herodotus-backend
+        working-directory: ./krakens-backend
         run: |
           go mod download
           go test -v ./...
@@ -36,7 +36,7 @@ jobs:
           node-version: '18'
       
       - name: Test Frontend
-        working-directory: ./herodotus-frontend
+        working-directory: ./krakens-frontend
         run: |
           npm ci
           npm run build

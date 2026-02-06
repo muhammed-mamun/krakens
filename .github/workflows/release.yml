@@ -55,7 +55,7 @@ jobs:
       - name: Build and push Backend
         uses: docker/build-push-action@v5
         with:
-          context: ./herodotus-backend
+          context: ./krakens-backend
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository }}/backend:${{ steps.version.outputs.VERSION }}
@@ -86,7 +86,7 @@ jobs:
       - name: Build and push Frontend
         uses: docker/build-push-action@v5
         with:
-          context: ./herodotus-frontend
+          context: ./krakens-frontend
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository }}/frontend:${{ steps.version.outputs.VERSION }}

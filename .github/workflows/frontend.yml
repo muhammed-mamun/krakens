@@ -4,12 +4,12 @@ on:
   push:
     branches: [ main, develop ]
     paths:
-      - 'herodotus-frontend/**'
+      - 'krakens-frontend/**'
       - '.github/workflows/frontend.yml'
   pull_request:
     branches: [ main ]
     paths:
-      - 'herodotus-frontend/**'
+      - 'krakens-frontend/**'
 
 env:
   REGISTRY: ghcr.io
@@ -29,18 +29,18 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: herodotus-frontend/package-lock.json
+          cache-dependency-path: krakens-frontend/package-lock.json
 
       - name: Install dependencies
-        working-directory: ./herodotus-frontend
+        working-directory: ./krakens-frontend
         run: npm ci
 
       - name: Run linter
-        working-directory: ./herodotus-frontend
+        working-directory: ./krakens-frontend
         run: npm run lint
 
       - name: Build application
-        working-directory: ./herodotus-frontend
+        working-directory: ./krakens-frontend
         run: npm run build
         env:
           NEXT_PUBLIC_API_URL: http://localhost:8080
@@ -84,7 +84,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./herodotus-frontend
+          context: ./krakens-frontend
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
