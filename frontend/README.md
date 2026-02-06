@@ -91,10 +91,10 @@ NEXT_PUBLIC_API_URL=http://localhost:8080
 ### Docker
 
 ```bash
-docker build -t krakens-frontend .
+docker build -t frontend .
 docker run -p 3000:3000 \
   -e NEXT_PUBLIC_API_URL=http://api.example.com \
-  krakens-frontend
+  frontend
 ```
 
 ### Vercel (Recommended)

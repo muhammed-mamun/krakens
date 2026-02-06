@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/nesohq/krakens-backend/internal/domain"
+	"github.com/nesohq/backend/internal/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"

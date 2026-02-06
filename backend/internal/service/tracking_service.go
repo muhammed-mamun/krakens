@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/nesohq/krakens-backend/internal/domain"
-	"github.com/nesohq/krakens-backend/internal/infrastructure/cache"
-	"github.com/nesohq/krakens-backend/internal/infrastructure/queue"
-	"github.com/nesohq/krakens-backend/internal/repository"
-	"github.com/nesohq/krakens-backend/internal/utils"
+	"github.com/nesohq/backend/internal/domain"
+	"github.com/nesohq/backend/internal/infrastructure/cache"
+	"github.com/nesohq/backend/internal/infrastructure/queue"
+	"github.com/nesohq/backend/internal/repository"
+	"github.com/nesohq/backend/internal/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nesohq/krakens-backend/internal/utils"
+	"github.com/nesohq/backend/internal/utils"
 )
 
 func AuthMiddleware(jwtSecret string) gin.HandlerFunc {

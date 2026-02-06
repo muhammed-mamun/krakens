@@ -8,15 +8,15 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nesohq/krakens-backend/internal/config"
-	"github.com/nesohq/krakens-backend/internal/domain"
-	"github.com/nesohq/krakens-backend/internal/handler"
-	"github.com/nesohq/krakens-backend/internal/infrastructure/cache"
-	"github.com/nesohq/krakens-backend/internal/infrastructure/db"
-	"github.com/nesohq/krakens-backend/internal/infrastructure/queue"
-	"github.com/nesohq/krakens-backend/internal/middleware"
-	"github.com/nesohq/krakens-backend/internal/repository"
-	"github.com/nesohq/krakens-backend/internal/service"
+	"github.com/nesohq/backend/internal/config"
+	"github.com/nesohq/backend/internal/domain"
+	"github.com/nesohq/backend/internal/handler"
+	"github.com/nesohq/backend/internal/infrastructure/cache"
+	"github.com/nesohq/backend/internal/infrastructure/db"
+	"github.com/nesohq/backend/internal/infrastructure/queue"
+	"github.com/nesohq/backend/internal/middleware"
+	"github.com/nesohq/backend/internal/repository"
+	"github.com/nesohq/backend/internal/service"
 )
 
 func main() {

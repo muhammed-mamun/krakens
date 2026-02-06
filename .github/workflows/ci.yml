@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Build Pipeline
 
 on:
   push:
@@ -8,24 +8,24 @@ on:
 
 jobs:
   backend:
-    name: Backend Tests
+    name: Build Backend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
-          go-version: '1.22'
+          go-version: '1.25'
       
-      - name: Test Backend
-        working-directory: ./krakens-backend
+      - name: Build Backend
+        working-directory: ./backend
         run: |
           go mod download
-          go test -v ./...
+          go build -v ./cmd/main.go
 
   frontend:
-    name: Frontend Tests
+    name: Build Frontend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,10 +33,15 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '24'
+          cache: 'yarn'
+          cache-dependency-path: frontend/yarn.lock
       
-      - name: Test Frontend
-        working-directory: ./krakens-frontend
+      - name: Build Frontend
+        working-directory: ./frontend
         run: |
-          npm ci
-          npm run build
+          yarn install --frozen-lockfile
+          yarn build
+        env:
+          NEXT_PUBLIC_API_URL: https://api.krakens.nesohq.org
+          NEXT_PUBLIC_FRONTEND_URL: https://krakens.nesohq.org

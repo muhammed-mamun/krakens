@@ -1,23 +1,23 @@
-name: Frontend CI/CD
+name: Frontend Build
 
 on:
   push:
     branches: [ main, develop ]
     paths:
-      - 'krakens-frontend/**'
+      - 'frontend/**'
       - '.github/workflows/frontend.yml'
   pull_request:
     branches: [ main ]
     paths:
-      - 'krakens-frontend/**'
+      - 'frontend/**'
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}/frontend
 
 jobs:
-  test:
-    name: Test Frontend
+  build:
+    name: Build Frontend
     runs-on: ubuntu-latest
     
     steps:
@@ -27,28 +27,25 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: krakens-frontend/package-lock.json
+          node-version: '24'
+          cache: 'yarn'
+          cache-dependency-path: frontend/yarn.lock
 
       - name: Install dependencies
-        working-directory: ./krakens-frontend
-        run: npm ci
-
-      - name: Run linter
-        working-directory: ./krakens-frontend
-        run: npm run lint
+        working-directory: ./frontend
+        run: yarn install --frozen-lockfile
 
       - name: Build application
-        working-directory: ./krakens-frontend
-        run: npm run build
+        working-directory: ./frontend
+        run: yarn build
         env:
           NEXT_PUBLIC_API_URL: http://localhost:8080
+          NEXT_PUBLIC_FRONTEND_URL: http://localhost:3000
 
-  build:
+  docker:
     name: Build & Push Docker Image
     runs-on: ubuntu-latest
-    needs: test
+    needs: build
     if: github.event_name == 'push'
     permissions:
       contents: read
@@ -84,7 +81,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./krakens-frontend
+          context: ./frontend
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

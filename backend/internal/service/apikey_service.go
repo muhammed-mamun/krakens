@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	"github.com/nesohq/krakens-backend/internal/domain"
-	"github.com/nesohq/krakens-backend/internal/repository"
-	"github.com/nesohq/krakens-backend/internal/utils"
+	"github.com/nesohq/backend/internal/domain"
+	"github.com/nesohq/backend/internal/repository"
+	"github.com/nesohq/backend/internal/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/nesohq/krakens-backend/internal/domain"
-	"github.com/nesohq/krakens-backend/internal/repository"
-	"github.com/nesohq/krakens-backend/internal/utils"
+	"github.com/nesohq/backend/internal/domain"
+	"github.com/nesohq/backend/internal/repository"
+	"github.com/nesohq/backend/internal/utils"
 )
 
 type AuthService struct {

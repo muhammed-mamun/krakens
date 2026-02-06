@@ -56,13 +56,13 @@ git clone https://github.com/nesohq/krakens.git
 cd krakens
 
 # Start backend
-cd krakens-backend
+cd backend
 docker-compose up -d  # Start dependencies
 cp .env.example .env
 make dev
 
 # Start frontend (new terminal)
-cd krakens-frontend
+cd frontend
 cp .env.example .env.local
 npm install && npm run dev
 ```
@@ -139,8 +139,8 @@ Header: Authorization: Bearer <token>
 
 ```
 krakens/
-├── krakens-backend/    # Go backend service
-├── krakens-frontend/   # Next.js frontend
+├── backend/    # Go backend service
+├── frontend/   # Next.js frontend
 └── .github/workflows/    # CI/CD pipelines
 ```
 

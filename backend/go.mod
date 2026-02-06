@@ -1,4 +1,4 @@
-module github.com/nesohq/krakens-backend
+module github.com/nesohq/backend
 
 go 1.25
 

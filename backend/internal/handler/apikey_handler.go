@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nesohq/krakens-backend/internal/domain"
-	"github.com/nesohq/krakens-backend/internal/service"
+	"github.com/nesohq/backend/internal/domain"
+	"github.com/nesohq/backend/internal/service"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
