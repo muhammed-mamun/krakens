@@ -39,8 +39,8 @@ jobs:
         working-directory: ./frontend
         run: yarn build
         env:
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'https://api.yourdomain.com' }}
-          NEXT_PUBLIC_FRONTEND_URL: ${{ secrets.NEXT_PUBLIC_FRONTEND_URL || 'https://yourdomain.com' }}
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'https://api.krakens.nesohq.org' }}
+          NEXT_PUBLIC_FRONTEND_URL: ${{ secrets.NEXT_PUBLIC_FRONTEND_URL || 'https://krakens.nesohq.org' }}
 
   docker:
     name: Build & Push Docker Image
@@ -86,7 +86,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL || 'https://api.krakens.nesohq.com' }}
-            NEXT_PUBLIC_FRONTEND_URL=${{ secrets.NEXT_PUBLIC_FRONTEND_URL || 'https://krakens.nesohq.com' }}
+            NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'https://api.krakens.nesohq.org' }}
+            NEXT_PUBLIC_FRONTEND_URL: ${{ secrets.NEXT_PUBLIC_FRONTEND_URL || 'https://krakens.nesohq.org' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

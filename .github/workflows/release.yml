@@ -95,8 +95,8 @@ jobs:
           context: ./frontend
           push: true
           build-args: |
-            NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL || 'https://api.krakens.nesohq.com' }}
-            NEXT_PUBLIC_FRONTEND_URL=${{ secrets.NEXT_PUBLIC_FRONTEND_URL || 'https://krakens.nesohq.com' }}
+            NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'https://api.krakens.nesohq.org' }}
+            NEXT_PUBLIC_FRONTEND_URL: ${{ secrets.NEXT_PUBLIC_FRONTEND_URL || 'https://krakens.nesohq.org' }}
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository }}/frontend:${{ steps.version.outputs.VERSION }}
             ${{ env.REGISTRY }}/${{ github.repository }}/frontend:latest
