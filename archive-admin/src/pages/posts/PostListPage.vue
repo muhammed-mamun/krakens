@@ -1,0 +1,162 @@
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Plus, Search } from 'lucide-vue-next'
+import { usePostStore } from '@/stores/post'
+import { useConfirm } from '@/composables/useConfirm'
+import { usePostFilters } from '@/composables/usePostFilters'
+import PostFilters from '@/components/posts/PostFilters.vue'
+import PostTableRow from '@/components/posts/PostTableRow.vue'
+
+const router = useRouter()
+const postStore = usePostStore()
+const { confirm } = useConfirm()
+
+const { statusFilter, searchQuery, filteredPosts, statusCounts } = usePostFilters(() => postStore.posts)
+
+const handleEdit = (id: number) => {
+  router.push(`/posts/${id}/edit`)
+}
+
+const handlePreview = async (id: number) => {
+  try {
+    const post = await postStore.fetchPostById(id)
+    if (post && post.slug) {
+      const previewUrl = `http://localhost:3000/archive/post/${post.slug}`
+      window.open(previewUrl, '_blank')
+    }
+  } catch (error) {
+    console.error('Failed to preview post:', error)
+  }
+}
+
+const handleDelete = async (id: number) => {
+  const confirmed = await confirm({
+    title: 'Delete Post',
+    message: 'Are you sure you want to delete this post? This action cannot be undone.',
+    confirmText: 'Delete',
+    type: 'danger',
+  })
+  if (confirmed) {
+    await postStore.deletePost(id)
+  }
+}
+
+const handlePublish = async (id: number) => {
+  const confirmed = await confirm({
+    title: 'Publish Post',
+    message: 'Are you sure you want to publish this post?',
+    confirmText: 'Publish',
+    type: 'info',
+  })
+  if (confirmed) {
+    await postStore.publishPost(id)
+  }
+}
+
+const handleUnpublish = async (id: number) => {
+  const confirmed = await confirm({
+    title: 'Unpublish Post',
+    message: 'This will make the post private. Continue?',
+    confirmText: 'Unpublish',
+    type: 'warning',
+  })
+  if (confirmed) {
+    await postStore.unpublishPost(id)
+  }
+}
+
+const handleArchive = async (id: number) => {
+  const confirmed = await confirm({
+    title: 'Archive Post',
+    message: 'This will archive the post. You can restore it later.',
+    confirmText: 'Archive',
+    type: 'warning',
+  })
+  if (confirmed) {
+    await postStore.archivePost(id)
+  }
+}
+
+onMounted(() => {
+  postStore.fetchPosts()
+})
+</script>
+
+<template>
+  <div class="space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight">Posts</h1>
+        <p class="text-muted-foreground mt-1">Manage and organize your content</p>
+      </div>
+      <Button @click="router.push('/posts/new')" size="lg" class="gap-2">
+        <Plus class="h-4 w-4" />
+        Create Post
+      </Button>
+    </div>
+
+    <!-- Filters -->
+    <PostFilters
+      v-model:search-query="searchQuery"
+      v-model:status-filter="statusFilter"
+      :status-counts="statusCounts"
+    />
+
+    <!-- Posts Table -->
+    <Card>
+      <CardHeader>
+        <CardTitle class="text-xl">
+          {{ filteredPosts.length }} {{ filteredPosts.length === 1 ? 'Post' : 'Posts' }}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div class="rounded-lg border">
+          <Table>
+            <TableHeader>
+              <TableRow class="bg-muted/50">
+                <TableHead class="font-semibold">Title</TableHead>
+                <TableHead class="font-semibold">Category</TableHead>
+                <TableHead class="font-semibold">Status</TableHead>
+                <TableHead class="font-semibold">Created</TableHead>
+                <TableHead class="text-right font-semibold">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <PostTableRow
+                v-for="post in filteredPosts"
+                :key="post.id"
+                :post="post"
+                @edit="handleEdit"
+                @preview="handlePreview"
+                @delete="handleDelete"
+                @publish="handlePublish"
+                @unpublish="handleUnpublish"
+                @archive="handleArchive"
+              />
+            </TableBody>
+          </Table>
+        </div>
+
+        <!-- Empty State -->
+        <div v-if="filteredPosts.length === 0" class="text-center py-12">
+          <div class="inline-flex h-16 w-16 items-center justify-center rounded-full bg-muted mb-4">
+            <Search class="h-8 w-8 text-muted-foreground" />
+          </div>
+          <h3 class="text-lg font-semibold mb-2">No posts found</h3>
+          <p class="text-sm text-muted-foreground mb-4">
+            {{ searchQuery ? 'Try adjusting your search' : 'Get started by creating your first post' }}
+          </p>
+          <Button v-if="!searchQuery" @click="router.push('/posts/new')">
+            <Plus class="h-4 w-4 mr-2" />
+            Create Post
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  </div>
+</template>

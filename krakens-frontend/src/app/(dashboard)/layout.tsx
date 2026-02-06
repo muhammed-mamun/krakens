@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
-import Navigation from '@/components/Navigation';
+import DashboardSidebar from '@/components/DashboardSidebar';
+import DashboardHeader from '@/components/DashboardHeader';
 
 export default function DashboardLayout({
   children,
@@ -11,36 +12,27 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const initializeAuth = useAuthStore((state) => state.initializeAuth);
-  const [mounted, setMounted] = useState(false);
+  const token = useAuthStore((state) => state.token);
 
   useEffect(() => {
-    initializeAuth();
-    setMounted(true);
-  }, [initializeAuth]);
-
-  useEffect(() => {
-    if (mounted && !isAuthenticated) {
+    if (!token) {
       router.push('/login');
     }
-  }, [isAuthenticated, router, mounted]);
+  }, [token, router]);
 
-  // Prevent hydration mismatch by not rendering until mounted
-  if (!mounted) {
-    return null;
-  }
-
-  if (!isAuthenticated) {
+  if (!token) {
     return null;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navigation />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {children}
-      </main>
+    <div className="min-h-screen flex w-full bg-background">
+      <DashboardSidebar />
+      <div className="flex-1 flex flex-col">
+        <DashboardHeader />
+        <main className="flex-1 p-6 space-y-6">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }
