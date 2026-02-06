@@ -45,6 +45,7 @@ export default function GettingStarted({ hasDomains, hasAPIKeys, hasTrackedEvent
       description: 'Add the tracking script to your website',
       action: 'View Instructions',
       completed: hasTrackedEvents,
+      route: '/api-keys',
     },
   ];
 
