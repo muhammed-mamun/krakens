@@ -28,13 +28,14 @@ type TrackRequest struct {
 }
 
 type RealtimeStats struct {
-	ActiveVisitors int             `json:"active_visitors"`
-	HitsPerMinute  []HitsPerMinute `json:"hits_per_minute"`
-	TopPages       []PageStats     `json:"top_pages"`
-	TopReferrers   []ReferrerStats `json:"top_referrers"`
-	Countries      map[string]int  `json:"countries"`
-	Devices        map[string]int  `json:"devices"`
-	Browsers       map[string]int  `json:"browsers"`
+	ActiveVisitors   int             `json:"active_visitors"`
+	ActiveVisitorIDs []string        `json:"active_visitor_ids"`
+	HitsPerMinute    []HitsPerMinute `json:"hits_per_minute"`
+	TopPages         []PageStats     `json:"top_pages"`
+	TopReferrers     []ReferrerStats `json:"top_referrers"`
+	Countries        map[string]int  `json:"countries"`
+	Devices          map[string]int  `json:"devices"`
+	Browsers         map[string]int  `json:"browsers"`
 }
 
 type HitsPerMinute struct {

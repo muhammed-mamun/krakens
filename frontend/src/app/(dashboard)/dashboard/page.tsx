@@ -10,6 +10,8 @@ import GettingStarted from '@/components/onboarding/GettingStarted';
 import StatCard from '@/components/ui/StatCard';
 import EmptyState from '@/components/ui/EmptyState';
 import Alert from '@/components/ui/Alert';
+import BadgeSetup from '@/components/BadgeSetup';
+import LiveVisitors from '@/components/LiveVisitors';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -43,10 +45,10 @@ export default function DashboardPage() {
         getDomains(),
         getAPIKeys(),
       ]);
-      
+
       setDomains(domainsRes.data || []);
       setHasAPIKeys((keysRes.data || []).length > 0);
-      
+
       if (domainsRes.data && domainsRes.data.length > 0) {
         setSelectedDomain(domainsRes.data[0].id);
       }
@@ -100,7 +102,7 @@ export default function DashboardPage() {
             onClick: () => router.push('/domains'),
           }}
         />
-        
+
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="text-center p-6 bg-primary/5">
             <div className="text-4xl mb-3">📊</div>
@@ -194,6 +196,11 @@ export default function DashboardPage() {
         />
       </div>
 
+      {/* Live Visitors Grid */}
+      <div className="grid grid-cols-1">
+        <LiveVisitors stats={realtimeStats} />
+      </div>
+
       {/* Traffic Chart */}
       <Card className="p-6">
         <div className="flex items-center justify-between mb-6">
@@ -210,17 +217,17 @@ export default function DashboardPage() {
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={realtimeStats?.hits_per_minute || []}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-              <XAxis 
-                dataKey="minute" 
+              <XAxis
+                dataKey="minute"
                 className="text-muted-foreground"
                 style={{ fontSize: '12px' }}
               />
-              <YAxis 
+              <YAxis
                 className="text-muted-foreground"
                 style={{ fontSize: '12px' }}
               />
-              <Tooltip 
-                contentStyle={{ 
+              <Tooltip
+                contentStyle={{
                   backgroundColor: 'hsl(var(--card))',
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '8px',
@@ -228,10 +235,10 @@ export default function DashboardPage() {
                   color: 'hsl(var(--foreground))'
                 }}
               />
-              <Line 
-                type="monotone" 
-                dataKey="hits" 
-                stroke="hsl(var(--primary))" 
+              <Line
+                type="monotone"
+                dataKey="hits"
+                stroke="hsl(var(--primary))"
                 strokeWidth={3}
                 dot={{ fill: 'hsl(var(--primary))', r: 4 }}
                 activeDot={{ r: 6 }}
@@ -342,8 +349,8 @@ export default function DashboardPage() {
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip 
-                    contentStyle={{ 
+                  <Tooltip
+                    contentStyle={{
                       backgroundColor: 'hsl(var(--card))',
                       border: '1px solid hsl(var(--border))',
                       borderRadius: '8px',
@@ -356,8 +363,8 @@ export default function DashboardPage() {
                 {Object.entries(realtimeStats?.devices || {}).map(([device, count], i) => (
                   <div key={device} className="flex items-center justify-between text-sm">
                     <div className="flex items-center space-x-2">
-                      <div 
-                        className="w-3 h-3 rounded-full" 
+                      <div
+                        className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: COLORS[i % COLORS.length] }}
                       />
                       <span>{device}</span>
@@ -474,6 +481,11 @@ export default function DashboardPage() {
             </button>
           </div>
         </Card>
+      )}
+
+      {/* Badge Setup */}
+      {selectedDomain && (
+        <BadgeSetup domainId={selectedDomain} />
       )}
     </div>
   );

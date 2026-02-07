@@ -72,3 +72,7 @@ func (r *RedisCache) ZRemRangeByScore(ctx context.Context, key, min, max string)
 func (r *RedisCache) ZCard(ctx context.Context, key string) (int64, error) {
 	return r.client.ZCard(ctx, key).Result()
 }
+
+func (r *RedisCache) ZRevRange(ctx context.Context, key string, start, stop int64) ([]string, error) {
+	return r.client.ZRevRange(ctx, key, start, stop).Result()
+}

@@ -90,6 +90,14 @@ func (s *TrackingService) GetRealtimeStats(ctx context.Context, domainID primiti
 	}
 	activeVisitors := int(count)
 
+	// Get active visitor IDs (top 20)
+	activeIDs, err := s.cache.ZRevRange(ctx, activeKey, 0, 19)
+	if err != nil {
+		// Log error but continue
+		fmt.Printf("Error getting active visitor IDs: %v\n", err)
+		activeIDs = []string{}
+	}
+
 	// Get recent events
 	events, err := s.eventRepo.GetRecentEvents(ctx, domainID, 60)
 	if err != nil {
@@ -98,13 +106,14 @@ func (s *TrackingService) GetRealtimeStats(ctx context.Context, domainID primiti
 
 	// Aggregate stats
 	stats := &domain.RealtimeStats{
-		ActiveVisitors: activeVisitors,
-		HitsPerMinute:  []domain.HitsPerMinute{},
-		TopPages:       []domain.PageStats{},
-		TopReferrers:   []domain.ReferrerStats{},
-		Countries:      make(map[string]int),
-		Devices:        make(map[string]int),
-		Browsers:       make(map[string]int),
+		ActiveVisitors:   activeVisitors,
+		ActiveVisitorIDs: activeIDs,
+		HitsPerMinute:    []domain.HitsPerMinute{},
+		TopPages:         []domain.PageStats{},
+		TopReferrers:     []domain.ReferrerStats{},
+		Countries:        make(map[string]int),
+		Devices:          make(map[string]int),
+		Browsers:         make(map[string]int),
 	}
 
 	// Aggregate data

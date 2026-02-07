@@ -35,6 +35,7 @@ export interface APIKey {
 
 export interface RealtimeStats {
   active_visitors: number;
+  active_visitor_ids?: string[];
   hits_per_minute: HitsPerMinute[];
   top_pages: PageStats[];
   top_referrers: ReferrerStats[];
