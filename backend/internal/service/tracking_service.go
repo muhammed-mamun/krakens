@@ -10,6 +10,7 @@ import (
 	"github.com/nesohq/backend/internal/infrastructure/queue"
 	"github.com/nesohq/backend/internal/repository"
 	"github.com/nesohq/backend/internal/utils"
+	"github.com/redis/go-redis/v9"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -53,17 +54,15 @@ func (s *TrackingService) Track(ctx context.Context, domainID primitive.ObjectID
 		return err
 	}
 
-	// Increment real-time counters
-	activeKey := fmt.Sprintf("active:%s", domainID.Hex())
-	visitorKey := fmt.Sprintf("visitor:%s:%s", domainID.Hex(), req.VisitorID)
-
-	// Mark visitor as active
-	if err := s.cache.Set(ctx, visitorKey, "1", 5*time.Minute); err != nil {
+	// Mark visitor as active using Sorted Set (score = timestamp)
+	activeKey := fmt.Sprintf("active_visitors:%s", domainID.Hex())
+	now := float64(time.Now().Unix())
+	if err := s.cache.ZAdd(ctx, activeKey, redis.Z{Score: now, Member: req.VisitorID}); err != nil {
 		return err
 	}
 
-	// Increment active counter
-	if err := s.cache.Incr(ctx, activeKey); err != nil {
+	// Set expiration on the set itself to auto-clean if abandoned (e.g. 1 hour)
+	if err := s.cache.Expire(ctx, activeKey, 1*time.Hour); err != nil {
 		return err
 	}
 
@@ -75,12 +74,21 @@ func (s *TrackingService) Track(ctx context.Context, domainID primitive.ObjectID
 
 func (s *TrackingService) GetRealtimeStats(ctx context.Context, domainID primitive.ObjectID) (*domain.RealtimeStats, error) {
 	// Get active visitors count
-	activeKey := fmt.Sprintf("active:%s", domainID.Hex())
-	activeStr, err := s.cache.Get(ctx, activeKey)
-	activeVisitors := 0
-	if err == nil {
-		fmt.Sscanf(activeStr, "%d", &activeVisitors)
+	// Get active visitors count (last 5 minutes)
+	activeKey := fmt.Sprintf("active_visitors:%s", domainID.Hex())
+	fiveMinutesAgo := fmt.Sprintf("%d", time.Now().Add(-5*time.Minute).Unix())
+
+	// Remove old visitors
+	if err := s.cache.ZRemRangeByScore(ctx, activeKey, "-inf", fiveMinutesAgo); err != nil {
+		return nil, err
 	}
+
+	// Count active
+	count, err := s.cache.ZCard(ctx, activeKey)
+	if err != nil {
+		return nil, err
+	}
+	activeVisitors := int(count)
 
 	// Get recent events
 	events, err := s.eventRepo.GetRecentEvents(ctx, domainID, 60)
@@ -142,4 +150,21 @@ func (s *TrackingService) GetOverviewStats(ctx context.Context, domainID primiti
 		AvgSessionTime: 0, // TODO: Calculate
 		BounceRate:     0, // TODO: Calculate
 	}, nil
+}
+
+func (s *TrackingService) GetActiveVisitorCount(ctx context.Context, domainID primitive.ObjectID) (int, error) {
+	activeKey := fmt.Sprintf("active_visitors:%s", domainID.Hex())
+	fiveMinutesAgo := fmt.Sprintf("%d", time.Now().Add(-5*time.Minute).Unix())
+
+	// Remove old visitors
+	if err := s.cache.ZRemRangeByScore(ctx, activeKey, "-inf", fiveMinutesAgo); err != nil {
+		return 0, err
+	}
+
+	// Count active
+	count, err := s.cache.ZCard(ctx, activeKey)
+	if err != nil {
+		return 0, err
+	}
+	return int(count), nil
 }

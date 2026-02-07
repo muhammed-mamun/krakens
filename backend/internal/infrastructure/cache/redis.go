@@ -60,3 +60,15 @@ func (r *RedisCache) Subscribe(ctx context.Context, channels ...string) *redis.P
 func (r *RedisCache) Close() error {
 	return r.client.Close()
 }
+
+func (r *RedisCache) ZAdd(ctx context.Context, key string, members ...redis.Z) error {
+	return r.client.ZAdd(ctx, key, members...).Err()
+}
+
+func (r *RedisCache) ZRemRangeByScore(ctx context.Context, key, min, max string) error {
+	return r.client.ZRemRangeByScore(ctx, key, min, max).Err()
+}
+
+func (r *RedisCache) ZCard(ctx context.Context, key string) (int64, error) {
+	return r.client.ZCard(ctx, key).Result()
+}

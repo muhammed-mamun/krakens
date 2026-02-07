@@ -64,6 +64,8 @@ func main() {
 	domainHandler := handler.NewDomainHandler(domainService)
 	apiKeyHandler := handler.NewAPIKeyHandler(apiKeyService)
 	trackingHandler := handler.NewTrackingHandler(trackingService, apiKeyService)
+	badgeHandler := handler.NewBadgeHandler(trackingService)
+	avatarHandler := handler.NewAvatarHandler()
 
 	// Start event worker
 	go startEventWorker(natsQueue, eventRepo)
@@ -74,6 +76,13 @@ func main() {
 	// Tracking endpoint (with permissive CORS - needs to accept requests from any website)
 	router.OPTIONS("/api/track", middleware.TrackingCORSMiddleware())
 	router.POST("/api/track", middleware.TrackingCORSMiddleware(), trackingHandler.Track)
+
+	// Public Assets (Badges, Avatars) - accessible from any origin
+	router.OPTIONS("/api/badges/:domain_id/live.svg", middleware.PublicGetCORSMiddleware())
+	router.GET("/api/badges/:domain_id/live.svg", middleware.PublicGetCORSMiddleware(), badgeHandler.GetLiveBadge)
+
+	router.OPTIONS("/api/avatars/:seed", middleware.PublicGetCORSMiddleware())
+	router.GET("/api/avatars/:seed", middleware.PublicGetCORSMiddleware(), avatarHandler.GetAvatar)
 
 	// Public routes (with restricted CORS)
 	router.OPTIONS("/api/auth/register", middleware.CORSMiddleware(cfg.FrontendURL))

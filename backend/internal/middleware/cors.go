@@ -38,3 +38,20 @@ func TrackingCORSMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+// PublicGetCORSMiddleware allows GET requests from any origin for public assets (badges, avatars)
+func PublicGetCORSMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		c.Writer.Header().Set("Access-Control-Max-Age", "86400")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
+}
